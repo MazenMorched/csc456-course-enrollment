@@ -1,0 +1,17 @@
+<%- include('../partials/head') %>
+<% const back = base + '/' + record._id; %>
+<a class="back" href="<%= back %>">← Record details</a>
+<header class="page-heading"><h1><%= title %></h1></header>
+<form class="panel box stack form-width" method="post" action="<%= back %>/delete">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <p>Permanently delete <strong><%= record[resource.label] %></strong>?</p>
+  <% if (resource.singular === 'course' && record.students.length) { %>
+    <p>This also removes <%= record.students.length %> enrollment(s) in this course.</p>
+  <% } %>
+  <% if (message) { %><p class="alert" role="alert"><%= message %></p><% } %>
+  <div class="actions">
+    <button class="button destructive" type="submit">Delete <%= resource.singular %></button>
+    <a class="button secondary" href="<%= back %>">Cancel</a>
+  </div>
+</form>
+<%- include('../partials/foot') %>

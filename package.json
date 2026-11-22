@@ -1,0 +1,24 @@
+{
+  "name": "course-enrollment",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CSC456 Project 2 course enrollment dashboard",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "admin": "node scripts/create-admin.js",
+    "test": "node --test"
+  },
+  "engines": { "node": ">=22 <25" },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.6.1",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.0"
+  }
+}

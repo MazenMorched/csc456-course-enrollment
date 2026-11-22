@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %> | Course Enrollment</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body class="<%= currentUser ? 'workspace' : 'guest' %>">
+<% if (currentUser) { %>
+  <aside class="rail">
+    <a class="brand" href="/dashboard"><span class="mark" aria-hidden="true">CE</span>Course Enrollment</a>
+    <nav aria-label="Main navigation">
+      <% for (const [url, name] of [['/dashboard', 'Overview'], ['/courses', 'Courses'], ['/students', 'Students'], ['/instructors', 'Instructors'], ['/enrollments', 'Enrollments']]) { %>
+        <a href="<%= url %>" <%- path === url || path.startsWith(url + '/') ? 'aria-current="page"' : '' %>><%= name %></a>
+      <% } %>
+    </nav>
+    <div class="account">
+      <span class="avatar" aria-hidden="true"><%= currentUser.name.slice(0, 1).toUpperCase() %></span>
+      <div><strong><%= currentUser.name %></strong><small><%= currentUser.role === 'admin' ? 'Administrator' : 'Staff' %></small></div>
+    </div>
+    <form method="post" action="/logout" class="logout">
+      <input type="hidden" name="_csrf" value="<%= typeof csrfToken === 'undefined' ? '' : csrfToken %>">
+      <button type="submit" class="button secondary">Sign out</button>
+    </form>
+  </aside>
+<% } %>
+<main id="main" class="<%= currentUser ? 'content' : 'guest-panel' %>">

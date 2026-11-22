@@ -1,0 +1,42 @@
+<%- include('../partials/head') %>
+<a class="back" href="/enrollments">← Enrollments</a>
+<header class="page-heading">
+  <div><h1><%= course.title %></h1><p><%= course.code %> · <%= course.instructor?.name || 'Instructor unavailable' %></p></div>
+  <a class="button secondary" href="/courses/<%= course._id %>">Course details</a>
+</header>
+<section class="panel box">
+  <h2>Enroll a student</h2>
+  <% if (message) { %><p class="alert" role="alert"><%= message %></p><% } %>
+  <% if (!available.length) { %>
+    <p>No additional students available.</p>
+  <% } else { %>
+    <form class="inline-form" method="post" action="/enrollments/<%= course._id %>">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <label>Student
+        <select name="student" required>
+          <option value="">Choose a student</option>
+          <% for (const student of available) { %>
+            <option value="<%= student._id %>"><%= student.name %> (<%= student.studentNumber %>)</option>
+          <% } %>
+        </select>
+      </label>
+      <button class="button primary" type="submit">Enroll student</button>
+    </form>
+  <% } %>
+</section>
+<section class="panel box related">
+  <h2>Enrolled students</h2>
+  <% if (!course.students.length) { %><p>No students enrolled.</p><% } %>
+  <ul class="link-list">
+    <% for (const student of course.students) { %>
+      <li>
+        <div><a href="/students/<%= student._id %>"><%= student.name %></a><small class="subline"><%= student.studentNumber %></small></div>
+        <form method="post" action="/enrollments/<%= course._id %>/students/<%= student._id %>/remove">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="button danger" aria-label="Remove <%= student.name %> from <%= course.title %>">Remove</button>
+        </form>
+      </li>
+    <% } %>
+  </ul>
+</section>
+<%- include('../partials/foot') %>

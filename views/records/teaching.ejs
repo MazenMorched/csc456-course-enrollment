@@ -1,0 +1,36 @@
+<%- include('../partials/head') %>
+<a class="back" href="/instructors/<%= instructor._id %>">← Instructor details</a>
+<header class="page-heading"><div><h1>Teaching assignments</h1><p><%= instructor.name %></p></div></header>
+<% if (currentUser.role === 'admin') { %>
+  <section class="panel box">
+    <h2>Assign a course</h2>
+    <% if (message) { %><p class="alert" role="alert"><%= message %></p><% } %>
+    <% if (available.length) { %>
+      <p>Assigning a course replaces its current instructor.</p>
+      <form class="inline-form" method="post" action="/teaching/<%= instructor._id %>">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <label>Course
+          <select name="course" required>
+            <option value="">Choose a course</option>
+            <% for (const course of available) { %>
+              <option value="<%= course._id %>"><%= course.title %> (<%= course.code %>)</option>
+            <% } %>
+          </select>
+        </label>
+        <button class="button primary">Assign course</button>
+      </form>
+    <% } else { %>
+      <p>No other courses are available to assign.</p>
+    <% } %>
+  </section>
+<% } %>
+<section class="panel box related">
+  <h2>Courses taught</h2>
+  <% if (!assigned.length) { %><p>No courses assigned.</p><% } %>
+  <ul class="link-list">
+    <% for (const course of assigned) { %>
+      <li><a href="/courses/<%= course._id %>"><%= course.title %></a><span><%= course.code %></span></li>
+    <% } %>
+  </ul>
+</section>
+<%- include('../partials/foot') %>

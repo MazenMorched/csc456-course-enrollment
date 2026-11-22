@@ -1,0 +1,30 @@
+<%- include('../partials/head') %>
+<% const back = mode === 'edit' ? base + '/' + record._id : base; %>
+<a class="back" href="<%= back %>">← <%= mode === 'edit' ? 'Record details' : resource.plural %></a>
+<header class="page-heading"><h1><%= title %></h1></header>
+<form class="panel box stack form-width" method="post" action="<%= mode === 'edit' ? back + '/edit' : base %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <% if (message) { %><p class="alert" role="alert"><%= message %></p><% } %>
+  <% for (const field of resource.fields) { %>
+    <label><%= field.label %>
+      <% if (field.type === 'select') { %>
+        <select name="<%= field.key %>" required>
+          <option value="">Choose an instructor</option>
+          <% for (const instructor of instructors) { %>
+            <option value="<%= instructor._id %>" <%= String(instructor._id) === String(record[field.key]) ? 'selected' : '' %>><%= instructor.name %></option>
+          <% } %>
+        </select>
+        <% if (!instructors.length) { %><small><a href="/instructors/new">Create an instructor</a> to assign this course.</small><% } %>
+      <% } else if (field.type === 'textarea') { %>
+        <textarea name="<%= field.key %>" maxlength="<%= field.maxLength %>" rows="4"><%= record[field.key] || '' %></textarea>
+      <% } else { %>
+        <input name="<%= field.key %>" type="<%= field.type %>" value="<%= record[field.key] || '' %>" maxlength="<%= field.maxLength %>" required>
+      <% } %>
+    </label>
+  <% } %>
+  <div class="actions">
+    <button class="button primary" type="submit"><%= mode === 'edit' ? 'Save changes' : 'Create ' + resource.singular %></button>
+    <a class="button secondary" href="<%= back %>">Cancel</a>
+  </div>
+</form>
+<%- include('../partials/foot') %>

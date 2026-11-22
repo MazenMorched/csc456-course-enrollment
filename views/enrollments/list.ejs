@@ -1,0 +1,21 @@
+<%- include('../partials/head') %>
+<header class="page-heading"><h1>Enrollments</h1></header>
+<% if (!courses.length) { %>
+  <p class="panel empty">Create a course before enrolling students.</p>
+<% } else { %>
+  <div class="panel table-wrap">
+    <table>
+      <thead><tr><th scope="col">Course</th><th scope="col">Instructor</th><th scope="col">Students enrolled</th></tr></thead>
+      <tbody>
+        <% for (const course of courses) { %>
+          <tr>
+            <td><a href="/enrollments/<%= course._id %>"><%= course.title %></a><small class="subline"><%= course.code %></small></td>
+            <td><%= course.instructor?.name || 'Unavailable' %></td>
+            <td><%= course.students.length %></td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+<% } %>
+<%- include('../partials/foot') %>

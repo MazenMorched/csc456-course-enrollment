@@ -1,0 +1,53 @@
+<%- include('../partials/head') %>
+<a class="back" href="<%= base %>">← <%= resource.plural %></a>
+<header class="page-heading">
+  <h1><%= title %></h1>
+  <% if (currentUser.role === 'admin') { %>
+    <div class="actions">
+      <a class="button secondary" href="<%= base %>/<%= record._id %>/edit">Edit <%= resource.singular %></a>
+      <a class="button danger" href="<%= base %>/<%= record._id %>/delete">Delete <%= resource.singular %></a>
+    </div>
+  <% } %>
+</header>
+<div class="panel box">
+  <dl class="details">
+    <% for (const field of resource.fields.filter(field => field.key !== resource.label)) { %>
+      <dt><%= field.label %></dt>
+      <dd class="<%= field.type === 'textarea' ? 'record-description' : '' %>">
+        <% if (field.type === 'select' && record[field.key]) { %>
+          <a href="/instructors/<%= record[field.key]._id %>"><%= record[field.key].name %></a>
+        <% } else { %>
+          <%= record[field.key] || '—' %>
+        <% } %>
+      </dd>
+    <% } %>
+  </dl>
+</div>
+<section class="panel box related">
+  <% if (resource.singular === 'course') { %>
+    <div class="section-heading">
+      <h2>Enrolled students</h2>
+      <a class="button secondary" href="/enrollments/<%= record._id %>">Manage enrollments</a>
+    </div>
+    <ul class="link-list">
+      <% for (const student of record.students) { %>
+        <li><a href="/students/<%= student._id %>"><%= student.name %></a><span><%= student.studentNumber %></span></li>
+      <% } %>
+    </ul>
+    <% if (!record.students.length) { %><p>No students enrolled.</p><% } %>
+  <% } else { %>
+    <div class="section-heading">
+      <h2><%= resource.singular === 'instructor' ? 'Courses taught' : 'Enrolled courses' %></h2>
+      <% if (resource.singular === 'instructor') { %>
+        <a class="button secondary" href="/teaching/<%= record._id %>">Teaching assignments</a>
+      <% } %>
+    </div>
+    <ul class="link-list">
+      <% for (const course of relatedCourses) { %>
+        <li><a href="/courses/<%= course._id %>"><%= course.title %></a><span><%= course.code %></span></li>
+      <% } %>
+    </ul>
+    <% if (!relatedCourses.length) { %><p>No linked courses.</p><% } %>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

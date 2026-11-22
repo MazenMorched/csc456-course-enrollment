@@ -1,0 +1,13 @@
+CSC456 — Project 2: Course Enrollment
+
+Team members and university IDs
+- [Full name] — [University ID]
+
+Public GitHub repository
+[https://github.com/ACCOUNT/REPOSITORY]
+
+Live Render deployment
+[https://SERVICE.onrender.com]
+
+MongoDB Atlas connection URI
+[Insert the configured URI in the private copy submitted to the instructor.]

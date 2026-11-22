@@ -1,0 +1,11 @@
+<%- include('partials/head') %>
+<header class="page-heading">
+  <div><h1>Overview</h1><p>Manage your course catalog and student enrollments.</p></div>
+  <% if (currentUser.role === 'admin') { %><a class="button primary" href="/courses/new">New course</a><% } %>
+</header>
+<section class="stat-grid" aria-label="Dashboard totals">
+  <% for (const [key, label] of [['courses', 'Courses'], ['students', 'Students'], ['instructors', 'Instructors'], ['enrollments', 'Enrollments']]) { %>
+    <a class="stat-card" href="/<%= key %>"><span><%= label %></span><strong><%= stats[key] %></strong></a>
+  <% } %>
+</section>
+<%- include('partials/foot') %>

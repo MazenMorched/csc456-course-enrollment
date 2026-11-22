@@ -1,0 +1,67 @@
+name: Test and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TEST_MONGODB_URI: mongodb://127.0.0.1:27017/?replicaSet=rs0
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Start MongoDB replica set
+        run: |
+          docker run -d --name course-test-db -p 127.0.0.1:27017:27017 mongo:7.0 --replSet rs0 --bind_ip_all
+          for attempt in {1..40}; do
+            if docker exec course-test-db mongosh --quiet --eval 'quit(db.adminCommand({ping: 1}).ok ? 0 : 1)'; then
+              break
+            fi
+            sleep 2
+          done
+          docker exec course-test-db mongosh --quiet --eval 'rs.initiate({_id:"rs0",members:[{_id:0,host:"127.0.0.1:27017"}]})'
+          for attempt in {1..30}; do
+            if docker exec course-test-db mongosh --quiet --eval 'quit(db.hello().isWritablePrimary ? 0 : 1)'; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+      - run: npm test
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 2
+    env:
+      RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+      DEPLOY_COMMIT: ${{ github.sha }}
+    steps:
+      - name: Request Render deployment
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
+            echo "::error::Set the RENDER_DEPLOY_HOOK GitHub Actions secret."
+            exit 1
+          fi
+          if ! curl --silent --fail --output /dev/null --max-time 30 --request POST "${RENDER_DEPLOY_HOOK}&ref=${DEPLOY_COMMIT}"; then
+            echo "::error::Render did not accept the deployment request."
+            exit 1
+          fi
+          echo "Render accepted deployment for ${DEPLOY_COMMIT}. Check the service's Deploys page for completion."
