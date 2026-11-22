@@ -1,9 +1,17 @@
 <%- include('../partials/head') %>
-<header class="page-heading"><h1>Enrollments</h1></header>
+<header class="page-heading"><div><h1>Enrollments</h1><p>Select a course to view its roster or manage enrollments.</p></div></header>
 <% if (!courses.length) { %>
-  <p class="panel empty">Create a course before enrolling students.</p>
+  <section class="panel empty">
+    <h2>No courses available</h2>
+    <% if (currentUser.role === 'admin') { %>
+      <p>Create a course before enrolling students.</p>
+      <a class="button primary" href="/courses/new">New course</a>
+    <% } else { %>
+      <p>An administrator needs to create a course before you can enroll students.</p>
+    <% } %>
+  </section>
 <% } else { %>
-  <div class="panel table-wrap">
+  <div class="panel table-wrap" tabindex="0" role="region" aria-label="Course enrollments table">
     <table>
       <thead><tr><th scope="col">Course</th><th scope="col">Instructor</th><th scope="col">Students enrolled</th></tr></thead>
       <tbody>

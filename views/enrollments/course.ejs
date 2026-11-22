@@ -4,6 +4,7 @@
   <div><h1><%= course.title %></h1><p><%= course.code %> · <%= course.instructor?.name || 'Instructor unavailable' %></p></div>
   <a class="button secondary" href="/courses/<%= course._id %>">Course details</a>
 </header>
+<div class="roster-layout">
 <section class="panel box">
   <h2>Enroll a student</h2>
   <% if (message) { %><p class="alert" role="alert"><%= message %></p><% } %>
@@ -24,13 +25,13 @@
     </form>
   <% } %>
 </section>
-<section class="panel box related">
-  <h2>Enrolled students</h2>
+<section class="panel box roster-panel">
+  <div class="section-heading"><h2>Enrolled students</h2><span class="roster-count"><%= course.students.length %> enrolled</span></div>
   <% if (!course.students.length) { %><p>No students enrolled.</p><% } %>
   <ul class="link-list">
     <% for (const student of course.students) { %>
       <li>
-        <div><a href="/students/<%= student._id %>"><%= student.name %></a><small class="subline"><%= student.studentNumber %></small></div>
+        <div class="roster-person"><span class="record-monogram" aria-hidden="true"><%= student.name.slice(0, 1).toUpperCase() %></span><div><a href="/students/<%= student._id %>"><%= student.name %></a><small class="subline"><%= student.studentNumber %></small></div></div>
         <form method="post" action="/enrollments/<%= course._id %>/students/<%= student._id %>/remove">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <button class="button danger" aria-label="Remove <%= student.name %> from <%= course.title %>">Remove</button>
@@ -39,4 +40,5 @@
     <% } %>
   </ul>
 </section>
+</div>
 <%- include('../partials/foot') %>

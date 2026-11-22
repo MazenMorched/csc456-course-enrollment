@@ -9,9 +9,11 @@
     </div>
   <% } %>
 </header>
-<div class="panel box">
+<section class="panel box record-summary" aria-labelledby="record-summary">
+  <h2 id="record-summary">Record information</h2>
   <dl class="details">
     <% for (const field of resource.fields.filter(field => field.key !== resource.label)) { %>
+      <div class="detail-field">
       <dt><%= field.label %></dt>
       <dd class="<%= field.type === 'textarea' ? 'record-description' : '' %>">
         <% if (field.type === 'select' && record[field.key]) { %>
@@ -20,9 +22,10 @@
           <%= record[field.key] || '—' %>
         <% } %>
       </dd>
+      </div>
     <% } %>
   </dl>
-</div>
+</section>
 <section class="panel box related">
   <% if (resource.singular === 'course') { %>
     <div class="section-heading">

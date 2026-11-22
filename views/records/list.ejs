@@ -1,13 +1,22 @@
 <%- include('../partials/head') %>
 <header class="page-heading">
-  <h1><%= title %></h1>
+  <div><h1><%= title %></h1><p><%= records.length.toLocaleString('en') %> <%= records.length === 1 ? resource.singular : resource.plural.toLowerCase() %></p></div>
   <% if (currentUser.role === 'admin') { %><a class="button primary" href="<%= base %>/new">New <%= resource.singular %></a><% } %>
 </header>
 <% if (records.length === 0) { %>
-  <p class="panel empty">No <%= resource.plural.toLowerCase() %> yet.</p>
+  <section class="panel empty">
+    <h2>No <%= resource.plural.toLowerCase() %> yet</h2>
+    <% if (currentUser.role === 'admin') { %><p>Use New <%= resource.singular %> to add the first record.</p><% } %>
+  </section>
 <% } else { %>
-  <div class="panel table-wrap">
-    <table>
+  <div class="panel directory">
+    <div class="directory-toolbar" hidden>
+      <label for="record-search">Search <%= resource.plural.toLowerCase() %></label>
+      <input id="record-search" type="search" aria-controls="record-table">
+      <p id="record-results" role="status"></p>
+    </div>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="<%= title %> table">
+    <table id="record-table" class="directory-table">
       <thead><tr>
         <% for (const field of resource.fields.filter(field => field.type !== 'textarea')) { %>
           <th scope="col"><%= field.label %></th>
@@ -17,9 +26,12 @@
       <% for (const record of records) { %>
         <tr>
           <% for (const field of resource.fields.filter(field => field.type !== 'textarea')) { %>
-            <td>
+            <td data-label="<%= field.label %>">
               <% if (field.key === resource.label) { %>
-                <a href="<%= base %>/<%= record._id %>"><%= record[field.key] %></a>
+                <a class="record-link" href="<%= base %>/<%= record._id %>">
+                  <span class="record-monogram" aria-hidden="true"><%= String(record[field.key]).slice(0, 1).toUpperCase() %></span>
+                  <span class="record-name"><%= record[field.key] %></span>
+                </a>
               <% } else { %>
                 <%= field.type === 'select' ? record[field.key]?.name || 'Unavailable' : record[field.key] %>
               <% } %>
@@ -30,5 +42,7 @@
       </tbody>
     </table>
   </div>
+  </div>
+  <script src="/assets/directory.js" defer></script>
 <% } %>
 <%- include('../partials/foot') %>

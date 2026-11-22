@@ -2,11 +2,11 @@
 <% const back = mode === 'edit' ? base + '/' + record._id : base; %>
 <a class="back" href="<%= back %>">← <%= mode === 'edit' ? 'Record details' : resource.plural %></a>
 <header class="page-heading"><h1><%= title %></h1></header>
-<form class="panel box stack form-width" method="post" action="<%= mode === 'edit' ? back + '/edit' : base %>">
+<form class="panel box stack form-width record-form" method="post" action="<%= mode === 'edit' ? back + '/edit' : base %>">
   <input type="hidden" name="_csrf" value="<%= csrfToken %>">
   <% if (message) { %><p class="alert" role="alert"><%= message %></p><% } %>
   <% for (const field of resource.fields) { %>
-    <label><%= field.label %>
+    <label><span><%= field.label %><% if (field.type === 'textarea') { %> <small class="optional-field">Optional</small><% } %></span>
       <% if (field.type === 'select') { %>
         <select name="<%= field.key %>" required>
           <option value="">Choose an instructor</option>
@@ -22,7 +22,7 @@
       <% } %>
     </label>
   <% } %>
-  <div class="actions">
+  <div class="actions form-footer">
     <button class="button primary" type="submit"><%= mode === 'edit' ? 'Save changes' : 'Create ' + resource.singular %></button>
     <a class="button secondary" href="<%= back %>">Cancel</a>
   </div>

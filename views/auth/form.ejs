@@ -1,4 +1,10 @@
 <%- include('../partials/head') %>
+<div class="auth-layout">
+<aside class="auth-intro" aria-label="Course Enrollment">
+  <div class="brand"><span class="mark" aria-hidden="true">CE</span>Course Enrollment</div>
+  <div><p class="hero-label">Academic administration</p><p class="auth-intro-title">Courses, records, and rosters.</p></div>
+  <div class="hero-art" aria-hidden="true"><div class="hero-orbit"></div><div class="hero-sheet hero-sheet-back"></div><div class="hero-sheet hero-sheet-front"><i></i><i></i><i></i></div></div>
+</aside>
 <section class="auth-card">
   <div class="brand auth-brand"><span class="mark" aria-hidden="true">CE</span>Course Enrollment</div>
   <h1><%= title %></h1>
@@ -21,4 +27,5 @@
     <p class="auth-switch">Already registered? <a href="/login">Sign in</a></p>
   <% } %>
 </section>
+</div>
 <%- include('../partials/foot') %>

@@ -7,12 +7,13 @@
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body class="<%= currentUser ? 'workspace' : 'guest' %>">
+<a class="skip-link" href="#main">Skip to content</a>
 <% if (currentUser) { %>
   <aside class="rail">
     <a class="brand" href="/dashboard"><span class="mark" aria-hidden="true">CE</span>Course Enrollment</a>
     <nav aria-label="Main navigation">
       <% for (const [url, name] of [['/dashboard', 'Overview'], ['/courses', 'Courses'], ['/students', 'Students'], ['/instructors', 'Instructors'], ['/enrollments', 'Enrollments']]) { %>
-        <a href="<%= url %>" <%- path === url || path.startsWith(url + '/') ? 'aria-current="page"' : '' %>><%= name %></a>
+        <a href="<%= url %>" <%- path === url || path.startsWith(url + '/') || (url === '/instructors' && path.startsWith('/teaching/')) ? 'aria-current="page"' : '' %>><%= name %></a>
       <% } %>
     </nav>
     <div class="account">
@@ -25,4 +26,4 @@
     </form>
   </aside>
 <% } %>
-<main id="main" class="<%= currentUser ? 'content' : 'guest-panel' %>">
+<main id="main" tabindex="-1" class="<%= currentUser ? 'content' : 'guest-panel' %>">

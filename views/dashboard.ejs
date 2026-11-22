@@ -1,11 +1,62 @@
 <%- include('partials/head') %>
-<header class="page-heading">
-  <div><h1>Course Enrollment Overview</h1><p>Manage your course catalog and student enrollments.</p></div>
-  <% if (currentUser.role === 'admin') { %><a class="button primary" href="/courses/new">New course</a><% } %>
+<header class="page-heading overview-heading">
+  <div class="hero-copy">
+    <p class="hero-label">Academic administration</p>
+    <h1>Course Enrollment Overview</h1>
+    <p>Browse courses, manage records, and keep rosters up to date.</p>
+    <div class="actions">
+      <% if (currentUser.role === 'admin') { %>
+        <a class="button primary" href="/courses/new">New course</a>
+        <a class="button hero-secondary" href="/enrollments">Manage enrollments</a>
+      <% } else { %>
+        <a class="button primary" href="/enrollments">Manage enrollments</a>
+      <% } %>
+    </div>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="hero-orbit"></div>
+    <div class="hero-sheet hero-sheet-back"></div>
+    <div class="hero-sheet hero-sheet-front"><i></i><i></i><i></i></div>
+  </div>
 </header>
 <section class="stat-grid" aria-label="Dashboard totals">
-  <% for (const [key, label] of [['courses', 'Courses'], ['students', 'Students'], ['instructors', 'Instructors'], ['enrollments', 'Enrollments']]) { %>
-    <a class="stat-card" href="/<%= key %>"><span><%= label %></span><strong><%= stats[key] %></strong></a>
+  <% for (const [key, label, caption] of [['courses', 'Courses', 'Browse the catalog'], ['students', 'Students', 'View student records'], ['instructors', 'Instructors', 'View teaching assignments'], ['enrollments', 'Enrollments', 'Manage course rosters']]) { %>
+    <a class="stat-card stat-<%= key %>" href="/<%= key %>">
+      <span><%= label %></span><strong><%= stats[key].toLocaleString('en') %></strong><small><%= caption %></small>
+    </a>
   <% } %>
 </section>
+<div class="dashboard-grid <%= currentUser.role === 'admin' ? 'dashboard-grid-admin' : '' %>">
+  <section class="panel recent-courses" aria-labelledby="recent-courses">
+    <div class="section-heading dashboard-panel-heading">
+      <h2 id="recent-courses">Recently added courses</h2>
+      <% if (recentCourses.length) { %><a href="/courses">View all courses</a><% } %>
+    </div>
+    <% if (recentCourses.length) { %>
+      <ul class="course-preview-list">
+        <% for (const course of recentCourses) { %>
+          <li>
+            <span class="course-code"><%= course.code %></span>
+            <div class="course-preview-name">
+              <a href="/courses/<%= course._id %>"><%= course.title %></a>
+              <small><%= course.instructor?.name || 'Instructor unavailable' %></small>
+            </div>
+            <a class="roster-count" href="/enrollments/<%= course._id %>" aria-label="View roster for <%= course.title %>, <%= course.students.length %> enrolled"><%= course.students.length %> enrolled</a>
+          </li>
+        <% } %>
+      </ul>
+    <% } else { %>
+      <div class="empty">
+        <p>New courses will appear here with their instructor and enrollment count.</p>
+      </div>
+    <% } %>
+  </section>
+  <% if (currentUser.role === 'admin') { %>
+    <section class="panel quick-actions" aria-labelledby="quick-actions">
+      <div class="dashboard-panel-heading"><h2 id="quick-actions">Quick actions</h2></div>
+      <a href="/students/new"><span aria-hidden="true">+</span><strong>New student</strong></a>
+      <a href="/instructors/new"><span aria-hidden="true">+</span><strong>New instructor</strong></a>
+    </section>
+  <% } %>
+</div>
 <%- include('partials/foot') %>
